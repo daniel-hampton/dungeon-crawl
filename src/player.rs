@@ -9,17 +9,18 @@ impl Player {
         Self { position }
     }
 
-    pub fn render(&self, ctx: &mut BTerm) {
-        ctx.set(
-            self.position.x,
-            self.position.y,
-            WHITE,
-            BLACK,
-            to_cp437('@'),
-        )
+    pub fn render(&self, ctx: &mut BTerm, camera: &Camera) {
+        let screen_x = self.position.x - camera.left_x;
+        let screen_y = self.position.y - camera.top_y;
+        ctx.set_active_console(Layers::Player as usize);
+        ctx.set(screen_x, screen_y, WHITE, BLACK, to_cp437('@'))
     }
 
-    pub fn update(&mut self, ctx: &mut BTerm, map: &Map) {
+    /**
+    Update the player position if a key is pressed and the tile permits
+    movement.
+    */
+    pub fn update(&mut self, ctx: &mut BTerm, map: &Map, camera: &mut Camera) {
         let key_option = ctx.key;
         let key = match key_option {
             Some(code) => code,
@@ -35,7 +36,10 @@ impl Player {
 
         let new_position = self.position + delta;
         if map.can_enter_tile(new_position) {
+            // update player posiiton
             self.position = new_position;
+            // update camera posiiton
+            camera.on_player_move(new_position);
         }
     }
 }

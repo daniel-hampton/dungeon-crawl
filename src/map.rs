@@ -19,13 +19,17 @@ impl Map {
         }
     }
 
-    pub fn render(&self, ctx: &mut BTerm) {
-        for y in 0..SCREEN_HEIGHT {
-            for x in 0..SCREEN_WIDTH {
-                let idx = map_idx(x, y);
-                match self.tiles[idx] {
-                    TileType::Floor => ctx.set(x, y, YELLOW, BLACK, to_cp437('.')),
-                    TileType::Wall => ctx.set(x, y, GREEN, BLACK, to_cp437('#')),
+    pub fn render(&self, ctx: &mut BTerm, camera: &Camera) {
+        ctx.set_active_console(Layers::Map as usize); // cast enum to integer
+        for world_y in camera.top_y..camera.bottom_y {
+            for world_x in camera.left_x..camera.right_x {
+                if let Some(idx) = self.try_idx(Point::new(world_x, world_y)) {
+                    let screen_x = world_x - camera.left_x;
+                    let screen_y = world_y - camera.top_y;
+                    match self.tiles[idx] {
+                        TileType::Floor => ctx.set(screen_x, screen_y, WHITE, BLACK, to_cp437('.')),
+                        TileType::Wall => ctx.set(screen_x, screen_y, WHITE, BLACK, to_cp437('#')),
+                    }
                 }
             }
         }
