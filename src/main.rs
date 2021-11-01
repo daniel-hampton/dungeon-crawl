@@ -13,14 +13,15 @@ mod prelude {
     pub use legion::world::*;
     pub use legion::*;
 
-    pub const SCREEN_WIDTH: i32 = 80;
-    pub const SCREEN_HEIGHT: i32 = 50;
-    pub const DISPLAY_WIDTH: i32 = SCREEN_WIDTH / 2;
-    pub const DISPLAY_HEIGHT: i32 = SCREEN_HEIGHT / 2;
+    pub const MAP_WIDTH: i32 = 80;
+    pub const MAP_HEIGHT: i32 = 50;
+    pub const MAP_SIZE: i32 = MAP_WIDTH * MAP_HEIGHT;
+    pub const DISPLAY_WIDTH: i32 = MAP_WIDTH / 2;
+    pub const DISPLAY_HEIGHT: i32 = MAP_HEIGHT / 2;
 
     pub enum Layers {
         Map,
-        Player,
+        Characters,
         Info,
     }
 
@@ -61,7 +62,7 @@ impl GameState for State {
     fn tick(&mut self, ctx: &mut BTerm) {
         ctx.set_active_console(Layers::Map as usize);
         ctx.cls();
-        ctx.set_active_console(Layers::Player as usize);
+        ctx.set_active_console(Layers::Characters as usize);
         ctx.cls();
         ctx.set_active_console(Layers::Info as usize);
         ctx.cls();
