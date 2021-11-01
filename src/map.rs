@@ -6,6 +6,7 @@ pub const NUM_TILES: usize = (MAP_WIDTH * MAP_HEIGHT) as usize;
 pub enum TileType {
     Wall,
     Floor,
+    Space,
 }
 
 pub struct Map {
@@ -41,4 +42,11 @@ impl Map {
 
 pub fn map_idx(x: i32, y: i32) -> usize {
     ((y * MAP_WIDTH) + x) as usize
+}
+
+pub fn convert_idx_to_point(idx: usize) -> Point {
+    let i32_idx = idx as i32;
+    let x = i32_idx % MAP_WIDTH; // remainder, loops after reaching map width.
+    let y = i32_idx / MAP_WIDTH; // result always an integer rounded down.
+    Point::new(x, y)
 }

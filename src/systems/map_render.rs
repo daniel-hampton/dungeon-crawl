@@ -12,6 +12,7 @@ pub fn map_render(#[resource] map: &Map, #[resource] camera: &Camera) {
                 let glyph = match map.tiles[idx] {
                     TileType::Floor => to_cp437('.'),
                     TileType::Wall => to_cp437('#'),
+                    TileType::Space => 32,
                 };
                 draw_batch.set(pt - offset, ColorPair::new(WHITE, BLACK), glyph);
             }
