@@ -9,12 +9,13 @@ pub fn map_render(#[resource] map: &Map, #[resource] camera: &Camera) {
             let pt = Point::new(x, y);
             let offset = Point::new(camera.left_x, camera.top_y);
             if let Some(idx) = map.try_idx(pt) {
-                let glyph = match map.tiles[idx] {
-                    TileType::Floor => to_cp437('.'),
-                    TileType::Wall => to_cp437('#'),
-                    TileType::Space => 32,
+                let (glyph, color_pair) = match map.tiles[idx] {
+                    TileType::Floor => (to_cp437('.'), ColorPair::new(DARKGRAY, BLACK)),
+                    TileType::Wall => (to_cp437('#'), ColorPair::new(DARK_ORANGE, BLACK)),
+                    TileType::Space => (32, ColorPair::new(WHITE, BLACK)),
                 };
-                draw_batch.set(pt - offset, ColorPair::new(WHITE, BLACK), glyph);
+                let screen_pos = pt - offset;
+                draw_batch.set(screen_pos, color_pair, glyph);
             }
         }
     }
