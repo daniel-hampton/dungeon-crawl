@@ -8,6 +8,7 @@ pub struct Camera {
 }
 
 impl Camera {
+    /** Initializes a new Camera instance. */
     pub fn new(player_position: Point) -> Self {
         Self {
             left_x: player_position.x - DISPLAY_WIDTH / 2,
@@ -17,6 +18,16 @@ impl Camera {
         }
     }
 
+    /// Moves the camera when the player position changes.
+    ///
+    /// * bullet point
+    ///
+    /// [ ] empty checkbox
+    ///
+    /// [x] closed checkbox
+    /// ```
+    ///     console.log("some code example")
+    /// ```
     pub fn on_player_move(&mut self, player_position: Point) {
         self.left_x = player_position.x - DISPLAY_WIDTH / 2;
         self.right_x = player_position.x + DISPLAY_WIDTH / 2;
