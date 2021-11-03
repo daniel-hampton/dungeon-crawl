@@ -118,40 +118,34 @@ impl MapBuilder {
             ("top_left", Point::new(-1, -1)),
         ];
 
-        self.map
-            .tiles
-            .iter()
-            .enumerate()
-            .for_each(|(index, tile)| {
-                let map_point = convert_idx_to_point(index);
+        self.map.tiles.iter().enumerate().for_each(|(index, tile)| {
+            let map_point = convert_idx_to_point(index);
 
-                
-                if *tile == TileType::Wall {
-                    let mut neighbor_is_floor: Vec<bool> = vec![];
-                    // check if any neighbors are Floor tiles.                    
-                    neighboring_offsets.iter().for_each(|(_, offset)| {
-                        let neighboring_point = map_point + *offset;
-                        // if index == 400 {
+            if *tile == TileType::Wall {
+                let mut neighbor_is_floor: Vec<bool> = vec![];
+                // check if any neighbors are Floor tiles.
+                neighboring_offsets.iter().for_each(|(_, offset)| {
+                    let neighboring_point = map_point + *offset;
+                    // if index == 400 {
 
-                        //     println!("index {:?}", index);
-                        //     println!("map_point {:?}", map_point);
-                        //     println!("offset {:?}", offset);
-                        //     println!("neighboring_point {:?}", neighboring_point);
-                        // }
-                        if let Some(idx) = self.map.try_idx(neighboring_point) {
-                            if self.map.tiles[idx] == TileType::Floor {
-                                neighbor_is_floor.push(true);
-                            }
+                    //     println!("index {:?}", index);
+                    //     println!("map_point {:?}", map_point);
+                    //     println!("offset {:?}", offset);
+                    //     println!("neighboring_point {:?}", neighboring_point);
+                    // }
+                    if let Some(idx) = self.map.try_idx(neighboring_point) {
+                        if self.map.tiles[idx] == TileType::Floor {
+                            neighbor_is_floor.push(true);
                         }
-                        // if there are no surrounding floors, add index to list.
-                        
-                    });
-
-                    if neighbor_is_floor.len() == 0 {
-                        space_tile_index.push(index);
                     }
+                    // if there are no surrounding floors, add index to list.
+                });
+
+                if neighbor_is_floor.len() == 0 {
+                    space_tile_index.push(index);
                 }
-            });
+            }
+        });
         // Add space tiles.
         space_tile_index.iter().for_each(|index| {
             self.map.tiles[*index] = TileType::Space;
