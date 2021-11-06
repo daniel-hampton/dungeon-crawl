@@ -8,7 +8,7 @@ pub fn hud(ecs: &mut SubWorld) {
     let player_health = health_query.iter(ecs).nth(0).unwrap();
     let mut draw_batch = DrawBatch::new();
     draw_batch.target(Layers::Info as usize);
-    draw_batch.print_centered(1, "Explore the Dungeon. Cursor keys and WASD to move.");
+    draw_batch.print_centered(2, "Explore the Dungeon. Cursor keys and WASD to move.");
     draw_batch.bar_horizontal(
         Point::zero(),
         MAP_WIDTH * 2,

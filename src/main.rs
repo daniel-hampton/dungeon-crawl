@@ -81,8 +81,13 @@ impl GameState for State {
         ctx.set_active_console(Layers::Info as usize);
         ctx.cls();
 
-        // Execute Systems depending on current turn state.
         self.resources.insert(ctx.key);
+
+        // set terminal to recieve correct mouse position coordinates;
+        ctx.set_active_console(Layers::Map as usize);
+        self.resources.insert(Point::from_tuple(ctx.mouse_pos()));
+
+        // Execute Systems depending on current turn state.
         let current_turn = self.resources.get::<TurnState>().unwrap().clone();
         match current_turn {
             TurnState::AwaitingInput => self
