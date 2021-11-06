@@ -26,14 +26,16 @@ pub fn get_player_input(
             let mut players = <(Entity, &Point)>::query().filter(component::<Player>());
             players.iter_mut(ecs).for_each(|(entity, pos)| {
                 let destination = *pos + delta;
-                commands.push(((), WantsToMove {
-                    destination: destination,
-                    entity: *entity,
-                }));
-
+                commands.push((
+                    (),
+                    WantsToMove {
+                        destination: destination,
+                        entity: *entity,
+                    },
+                ));
             });
         }
-        
+
         *turn_state = TurnState::PlayerTurn;
     }
 }

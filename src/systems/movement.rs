@@ -34,7 +34,6 @@ pub fn movement(
 }
 
 fn move_camera_if_player_moves(ecs: &mut SubWorld, camera: &mut Camera, want_move: &WantsToMove) {
-    
     // Checking if the entity has the Player component.
     if ecs
         .entry_ref(want_move.entity)
