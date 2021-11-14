@@ -14,21 +14,11 @@ pub fn chasing(ecs: &SubWorld, commands: &mut CommandBuffer, #[resource] map: &M
     let player_idx = map_idx(player_pos.x, player_pos.y);
 
     let search_targets = vec![player_idx];
-    let dijkstra_map = DijkstraMap::new(
-        MAP_WIDTH,
-        MAP_HEIGHT,
-        &search_targets,
-        map,
-        1024.0,
-    );
+    let dijkstra_map = DijkstraMap::new(MAP_WIDTH, MAP_HEIGHT, &search_targets, map, 1024.0);
 
     movers.iter(ecs).for_each(|(entity, pos, _)| {
         let idx = map_idx(pos.x, pos.y);
-        if let Some(destination) = DijkstraMap::find_lowest_exit(
-            &dijkstra_map,
-            idx,
-            map,
-        ) {
+        if let Some(destination) = DijkstraMap::find_lowest_exit(&dijkstra_map, idx, map) {
             // Checking distance to see if monster is adjacent to player.
             let distance = DistanceAlg::Pythagoras.distance2d(*pos, *player_pos);
             // convert destination to a point, unless it's adjace to player, then
@@ -47,20 +37,31 @@ pub fn chasing(ecs: &SubWorld, commands: &mut CommandBuffer, #[resource] map: &M
                 .filter(|(_, target_pos, _)| **target_pos == destination)
                 .for_each(|(victim, _, _)| {
                     // Check if victim is the player and send attack intent.
-                    if ecs.entry_ref(*victim).unwrap().get_component::<Player>().is_ok() {
-                        commands.push(((), WantsToAttack {
-                            attacker: *entity,
-                            victim: *victim,
-                        }));
+                    if ecs
+                        .entry_ref(*victim)
+                        .unwrap()
+                        .get_component::<Player>()
+                        .is_ok()
+                    {
+                        commands.push((
+                            (),
+                            WantsToAttack {
+                                attacker: *entity,
+                                victim: *victim,
+                            },
+                        ));
                     }
                     attacked = true;
                 });
 
             if !attacked {
-                commands.push(((), WantsToMove {
-                    destination: destination,
-                    entity: *entity,
-                }));
+                commands.push((
+                    (),
+                    WantsToMove {
+                        destination: destination,
+                        entity: *entity,
+                    },
+                ));
             }
         }
     });

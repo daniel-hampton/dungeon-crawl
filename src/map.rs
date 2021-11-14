@@ -44,14 +44,13 @@ impl Map {
         if self.in_bounds(destination) {
             if self.can_enter_tile(destination) {
                 let idx = self.point2d_to_index(destination);
-                return Some(idx)
+                return Some(idx);
             } else {
-                return None
+                return None;
             }
         } else {
-            return None
+            return None;
         }
-
     }
 }
 
@@ -78,10 +77,7 @@ impl BaseMap for Map {
     }
 
     fn get_pathing_distance(&self, idx1: usize, idx2: usize) -> f32 {
-        DistanceAlg::Pythagoras.distance2d(
-            self.index_to_point2d(idx1),
-            self.index_to_point2d(idx2),
-        )
+        DistanceAlg::Pythagoras.distance2d(self.index_to_point2d(idx1), self.index_to_point2d(idx2))
     }
 }
 

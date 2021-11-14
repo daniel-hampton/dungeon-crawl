@@ -30,7 +30,7 @@ pub fn spawn_monster(ecs: &mut World, rng: &mut RandomNumberGenerator, pos: Poin
     ecs.push((
         Enemy,
         pos,
-        ChasingPlayer, 
+        ChasingPlayer,
         Render {
             color: ColorPair::new(WHITE, BLACK),
             glyph: glyph,
