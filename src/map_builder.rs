@@ -6,6 +6,7 @@ pub struct MapBuilder {
     pub map: Map,
     pub rooms: Vec<Rect>,
     pub player_start: Point,
+    pub amulet_start: Point,
 }
 
 impl MapBuilder {
@@ -14,6 +15,7 @@ impl MapBuilder {
             map: Map::new(),
             rooms: Vec::new(),
             player_start: Point::zero(),
+            amulet_start: Point::zero(),
         };
         mb.fill(TileType::Wall);
         mb.build_random_rooms(rng);
@@ -21,6 +23,29 @@ impl MapBuilder {
         mb.remove_extra_walls();
         // place player in the center of the first room.
         mb.player_start = mb.rooms[0].center();
+        // Create dijkstra_map from player_start
+        let dijkstra_map = DijkstraMap::new(
+            // SCREEN_WIDTH in the book
+            MAP_WIDTH,
+            MAP_HEIGHT,
+            &vec![mb.map.point2d_to_index(mb.player_start)],
+            &mb.map,
+            1024.0,
+        );
+
+        const UNREACHABLE: &f32 = &f32::MAX;
+        // Find a far point to position the amulet
+        mb.amulet_start = mb.map.index_to_point2d(
+            dijkstra_map
+                .map
+                .iter()
+                .enumerate()
+                .filter(|(_, dist)| *dist < UNREACHABLE)
+                .max_by(|a, b| a.1.partial_cmp(b.1).unwrap())
+                .unwrap()
+                .0,
+        );
+
         mb
     }
 
