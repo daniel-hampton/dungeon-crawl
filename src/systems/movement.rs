@@ -1,17 +1,15 @@
 use crate::prelude::*;
 
 /**
- This is using a Legion shorthand for systems that run a single query.
- The query parameters are the components that are included in the function
- parameters.
+This is using a Legion shorthand for systems that run a single query.
+The query parameters are the components that are included in the function
+parameters.
 
-```python
-print(f'fstrings are the best {2 + 2}')
-```
- */
+*/
 
 #[system(for_each)]
 #[read_component(Player)]
+#[read_component(FieldOfView)]
 pub fn movement(
     entity: &Entity,
     want_move: &WantsToMove,
@@ -27,6 +25,12 @@ pub fn movement(
         // of the reference.
         commands.add_component(want_move.entity, want_move.destination);
 
+        // Mark the FieldOfView as dirty so it can update if the entity moves.
+        if let Ok(entry) = ecs.entry_ref(want_move.entity) {
+            if let Ok(fov) = entry.get_component::<FieldOfView>() {
+                commands.add_component(want_move.entity, fov.clone_dirty());
+            }
+        }
         // Yay extracting things to functions!
         move_camera_if_player_moves(ecs, camera, want_move);
     }
