@@ -13,7 +13,7 @@ parameters.
 pub fn movement(
     entity: &Entity,
     want_move: &WantsToMove,
-    #[resource] map: &Map,
+    #[resource] map: &mut Map,
     #[resource] camera: &mut Camera,
     ecs: &mut SubWorld,
     commands: &mut CommandBuffer,
@@ -29,6 +29,16 @@ pub fn movement(
         if let Ok(entry) = ecs.entry_ref(want_move.entity) {
             if let Ok(fov) = entry.get_component::<FieldOfView>() {
                 commands.add_component(want_move.entity, fov.clone_dirty());
+
+                if entry.get_component::<Player>().is_ok() {
+                    // Moves the camera when the player position changes.
+                    camera.on_player_move(want_move.destination);
+
+                    // Marks map tiles as revealed
+                    fov.visible_tiles.iter().for_each(|pos| {
+                        map.revealed[map_idx(pos.x, pos.y)] = true;
+                    })
+                }
             }
         }
         // Yay extracting things to functions!
@@ -44,8 +54,5 @@ fn move_camera_if_player_moves(ecs: &mut SubWorld, camera: &mut Camera, want_mov
         .unwrap()
         .get_component::<Player>()
         .is_ok()
-    {
-        // Moves the camera when the player position changes.
-        camera.on_player_move(want_move.destination)
-    }
+    {}
 }
